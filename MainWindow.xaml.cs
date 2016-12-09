@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace LocalChat
 {
@@ -27,9 +28,9 @@ namespace LocalChat
 		{
 			InitializeComponent();
 			SendButton.Click += Send_Click;
+			new Thread(new ThreadStart(Receiver)).Start();
 		}
-
-
+		
 		public void ThreadSend(object Message)
 		{
 			try
@@ -44,7 +45,7 @@ namespace LocalChat
 				var SendBytes = Encoding.Default.GetBytes(MessageText);
 				Connector.Send(SendBytes);
 				Connector.Close();
-
+				SendMsg("Sand: " + MessageText, ChatBox);
 			}
 			catch (Exception ex)
 			{
@@ -64,6 +65,35 @@ namespace LocalChat
 		private void Send_Click(object sender, RoutedEventArgs e)
 		{
 			new Thread(new ParameterizedThreadStart(ThreadSend)).Start(new string[] { Message.Text, IP.Text });
+		}
+
+		protected void Receiver()
+		{
+			var Listen = new TcpListener(7000);
+			Listen.Start();
+			Socket ReceiveSocket;
+			while (true)
+			{
+				try
+				{
+					ReceiveSocket = Listen.AcceptSocket();
+					var Receive = new Byte[256];
+					using (MemoryStream MessageR = new MemoryStream())
+					{
+						int ReceivedBytes;
+						do
+						{
+							ReceivedBytes = ReceiveSocket.Receive(Receive, Receive.Length, 0);
+							MessageR.Write(Receive, 0, ReceivedBytes);
+						} while (ReceiveSocket.Available > 0);
+						SendMsg("Received: " + Encoding.Default.GetString(MessageR.ToArray()), ChatBox);
+					}
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
+			}
 		}
 	}
 }
