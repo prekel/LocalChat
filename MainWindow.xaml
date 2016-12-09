@@ -12,7 +12,7 @@
 		<TextBox
 			x:Name="IP"
 			Grid.Column="1"
-			Grid.Row="1" />
+			Grid.Row="1" Text="192.168.1.2" />
 		<RichTextBox
 			x:Name="ChatBox"
 			IsReadOnly="True"
@@ -20,7 +20,7 @@
 			Grid.ColumnSpan="2"
 			Grid.Row="3" >
 		</RichTextBox>
-		<RichTextBox
+		<TextBox
 			x:Name="Message"
 			Grid.Column="1"
 			Grid.Row="5" />
