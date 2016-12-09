@@ -45,19 +45,20 @@ namespace LocalChat
 				var SendBytes = Encoding.Default.GetBytes(MessageText);
 				Connector.Send(SendBytes);
 				Connector.Close();
-				SendMsg("Sand: " + MessageText, ChatBox);
+				SendMsg("→ " + MessageText, ChatBox);
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message);
 			}
 		}
-		public void SendMsg(string Text, RichTextBox Rtb)
+		public void SendMsg(string Text, TextBox Rtb)
 		{
 			Action action = () =>
 			{
-				var tr = new TextRange(Rtb.Document.ContentStart, Rtb.Document.ContentEnd);
-				tr.Text += Text;
+				//var tr = new TextRange(Rtb.Document.ContentStart, Rtb.Document.ContentEnd);
+				//tr.Text += Text;
+				Rtb.Text += Text + "\n";
 			};
 			Dispatcher.Invoke(action);
 		}
@@ -87,7 +88,7 @@ namespace LocalChat
 							ReceivedBytes = ReceiveSocket.Receive(Receive, Receive.Length, 0);
 							MessageR.Write(Receive, 0, ReceivedBytes);
 						} while (ReceiveSocket.Available > 0);
-						SendMsg("Received: " + Encoding.Default.GetString(MessageR.ToArray()), ChatBox);
+						SendMsg("← " + Encoding.Default.GetString(MessageR.ToArray()), ChatBox);
 					}
 				}
 				catch (Exception ex)
