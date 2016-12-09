@@ -65,6 +65,7 @@ namespace LocalChat
 		private void Send_Click(object sender, RoutedEventArgs e)
 		{
 			new Thread(new ParameterizedThreadStart(ThreadSend)).Start(new string[] { Message.Text, IP.Text });
+			Message.Text = "";
 		}
 
 		protected void Receiver()
